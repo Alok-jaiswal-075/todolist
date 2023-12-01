@@ -9,13 +9,8 @@ on:
     branches:
       - main
 
-# on:
-#   schedule:
-#     - cron:  '*/15 * * * *'
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
