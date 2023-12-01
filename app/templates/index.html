@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+  <div class="container pt-4">
+    <div class="row p-0 mt-4">
+      <div class="col-lg-4 mx-auto shadow p-0">
+        <div class="alert alert-info">
+          <h2>Add New TODO</h2>
+        </div>
+        <div class="p-4">
+          <form action="/add-todo/" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="id_title">Title:</label>
+              <input type="text" id="id_title" name="title" maxlength="100" required>
+            </div>
+            <div class="form-group">
+              <label for="id_description">Description:</label>
+              <textarea id="id_description" name="description" maxlength="1000" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="id_due_date">Due Date:</label>
+              <input type="datetime-local" id="id_due_date" name="due_date">
+            </div>
+            <div class="form-group">
+              <label for="id_status">Status:</label>
+              <select id="id_status" name="status">
+                <option value="OPEN">Open</option>
+                <option value="WORKING">Working</option>
+                <option value="DONE">Done</option>
+                <option value="OVERDUE">Overdue</option>
+              </select>
+            </div>
+            <hr>
+            <input type="submit" value="ADD" class="btn btn-info">
+          </form>
+          
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="border">
+
+          {% if todos|length == 0 %}
+
+          <div class="p-4">
+            <br>
+            <br>
+            <div class="alert alert-info text-center">
+              <p class="" style="font-size: 30px;">No Todos</p>
+            </div>
+            <br>
+            <br>
+          </div>
+
+          {% else %}
+          <div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Title</th>
+                  <th>Status</th>
+                  <th>Due Date</th>
+                  <th>Action</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+
+              <tbody>
+
+                {% for todo in todos %}
+                <tr>
+                  <td>{{ todo.timestamp }}</td>
+                  <td>{{ todo.title }}</td>
+                  <td>
+                    {% if todo.status == 'OPEN' %}
+                    🕒
+                    {% elif todo.status == 'WORKING' %}
+                    🛠️
+                    {% elif todo.status == 'DONE' %}
+                    ✅
+                    {% else %}
+                    ⚠️
+                    {% endif %}
+                  </td>
+                  <td>{{ todo.due_date }}</td>
+                  <td>
+                    <a href="/delete-todo/{{ todo.id }}" title="Delete" class="">🗑️</a>
+                    {% if todo.status == 'OPEN' %}
+                    <a href="/change-status/{{ todo.id }}/WORKING" title="Mark as Working" class="">🛠️</a>
+                    {% elif todo.status == 'WORKING' %}
+                    <a href="/change-status/{{ todo.id }}/DONE" title="Mark as Done" class="">✅</a>
+                    {% else %}
+                    <a href="/change-status/{{ todo.id }}/OPEN" title="Reopen Task" class="">🕒</a>
+                    {% endif %}
+                  </td>
+                  <td>{{todo.description}}</td>
+                </tr>
+                {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
