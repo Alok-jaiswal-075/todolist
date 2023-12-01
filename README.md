@@ -34,7 +34,7 @@ Ensure you have the following installed on your machine:
 2. **Create and activate a virtual environment:**
 
    ```bash
-   python -m venv myenv
+   python -m virtualenv myenv
    # On Windows
    myenv\Scripts\activate
    # On macOS/Linux
