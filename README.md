@@ -63,6 +63,24 @@ Ensure you have the following installed on your machine:
 
    Visit `http://127.0.0.1:8000/` in your web browser.
 
+## Handling Forbidden (CSRF) Errors
+
+During API testing, if you encounter a Forbidden (CSRF) error, follow these steps to include the CSRF token in the request header:
+
+1. **Retrieve the CSRF Token:**
+
+   - When accessing the API endpoints that require CSRF protection, the server generates a CSRF token.
+   - To retrieve the CSRF token, make a request to any endpoint that requires authentication (e.g., `/login/`, `/signup/`).
+2. **Copy the CSRF Token:**
+
+   - Once the request is made, the CSRF token will be included in the response headers. Look for the `CSRF-Token` or `X-CSRFToken` header.
+   - Copy the CSRF token value.
+3. **Include CSRF Token in Header:**
+
+   - For subsequent requests that trigger Forbidden errors, add the CSRF token to the request header.
+   - Include the token in the header with the key `X-CSRFToken`.
+   - Set the `X-CSRFToken` header value to the copied CSRF token.
+
 ### API Endpoints
 
 #### Tasks
