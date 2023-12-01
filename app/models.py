@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
@@ -23,4 +24,15 @@ class TODO(models.Model):
     due_date = models.DateTimeField(null=True, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='OPEN')
-    user  = models.ForeignKey(User  , on_delete= models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        if not self.id and not self.timestamp:
+            self.timestamp = timezone.now()
+        if self.due_date:
+            if timezone.is_naive(self.due_date):
+                self.due_date = timezone.make_aware(self.due_date, timezone.get_current_timezone())
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.title
