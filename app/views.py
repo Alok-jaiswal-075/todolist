@@ -1,10 +1,13 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login as loginUser, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from app.forms import TODOForm
 from app.models import TODO
 from django.contrib.auth.decorators import login_required
+from django.core.serializers.json import DjangoJSONEncoder
+from django.forms.models import model_to_dict
+import json
 
 
 @login_required(login_url='login')
@@ -16,11 +19,7 @@ def home(request):
 
 def login(request):
     if request.method == 'GET':
-        form1 = AuthenticationForm()
-        context = {
-            "form": form1
-        }
-        return render(request, 'login.html', context=context)
+        return HttpResponse("This is login form", content_type="application/text")
     else:
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
@@ -31,24 +30,14 @@ def login(request):
                 loginUser(request, user)
                 return HttpResponse("Logged in successfully", content_type="application/text")
         else:
-            context = {
-                "form": form
-            }
             return HttpResponse("Login failed", content_type="application/text")
 
 
 def signup(request):
     if request.method == 'GET':
-        form = UserCreationForm()
-        context = {
-            "form": form
-        }
-        return render(request, 'signup.html', context=context)
+        return HttpResponse("This is signup form", content_type="application/text")
     else:
         form = UserCreationForm(request.POST)
-        context = {
-            "form": form
-        }
         try:
             form.is_valid()
             user = form.save()
@@ -88,3 +77,18 @@ def change_todo(request, id, status):
 def signout(request):
     logout(request)
     return HttpResponse("Logged out successfully", content_type="application/text")
+
+
+def all_tasks(request):
+    if request.user.is_authenticated:
+        tasks = TODO.objects.filter(user=request.user).values()
+        tasks_list = list(tasks)  # Convert QuerySet to a list of dictionaries
+        data = json.dumps(tasks_list, cls=DjangoJSONEncoder)  # Serialize to JSON
+        return HttpResponse(data, content_type='application/json')
+
+
+def specific_task(request, task_id):
+    if request.user.is_authenticated:
+        task = get_object_or_404(TODO, pk=task_id, user=request.user)
+        data = model_to_dict(task)
+        return JsonResponse(data)
