@@ -14,12 +14,12 @@ import json
 def home(request):
     if request.user.is_authenticated:
         # Unused variables removed: form and todos
-        return HttpResponse("This is the home page", content_type="application/text")
+        return HttpResponse("This is the home page", content_type="text/html")
 
 
 def login(request):
     if request.method == 'GET':
-        return HttpResponse("This is login form", content_type="application/text")
+        return HttpResponse("This is login form", content_type="text/html")
     else:
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
@@ -28,24 +28,24 @@ def login(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 loginUser(request, user)
-                return HttpResponse("Logged in successfully", content_type="application/text")
+                return HttpResponse("Logged in successfully", content_type="text/html")
         else:
-            return HttpResponse("Login failed", content_type="application/text")
+            return HttpResponse("Login failed", content_type="text/html")
 
 
 def signup(request):
     if request.method == 'GET':
-        return HttpResponse("This is signup form", content_type="application/text")
+        return HttpResponse("This is signup form", content_type="text/html")
     else:
         form = UserCreationForm(request.POST)
         try:
             form.is_valid()
             user = form.save()
             if user is not None:
-                return HttpResponse("User added successfully", content_type="application/text")
+                return HttpResponse("User added successfully", content_type="text/html")
         except Exception as e:
             print(e)
-            return HttpResponse("Signup failed", content_type="application/text")
+            return HttpResponse("Signup failed", content_type="text/html")
 
 
 @login_required(login_url='login')
@@ -57,26 +57,26 @@ def add_todo(request):
             todo = form.save(commit=False)
             todo.user = user
             todo.save()
-            return HttpResponse("Todo added successfully", content_type="application/text")
+            return HttpResponse("Todo added successfully", content_type="text/html")
         else:
-            return HttpResponse("Cannot add todo", content_type="application/text")
+            return HttpResponse("Cannot add todo", content_type="text/html")
 
 
 def delete_todo(request, id):
     TODO.objects.get(pk=id).delete()
-    return HttpResponse("Deleted todo", content_type="application/text")
+    return HttpResponse("Deleted todo", content_type="text/html")
 
 
 def change_todo(request, id, status):
     todo = TODO.objects.get(pk=id)
     todo.status = status
     todo.save()
-    return HttpResponse("Changed todo status", content_type="application/text")
+    return HttpResponse("Changed todo status", content_type="text/html")
 
 
 def signout(request):
     logout(request)
-    return HttpResponse("Logged out successfully", content_type="application/text")
+    return HttpResponse("Logged out successfully", content_type="text/html")
 
 
 def all_tasks(request):
