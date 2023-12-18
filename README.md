@@ -15,6 +15,9 @@ The Todo App API allows users to perform CRUD operations on tasks and includes u
   - User signup
   - User login
 
+### Coverage report
+![Coverage](./image/coverage.png)
+
 ## Getting Started
 
 ### Prerequisites
@@ -80,6 +83,8 @@ During API testing, if you encounter a Forbidden (CSRF) error, follow these step
    - For subsequent requests that trigger Forbidden errors, add the CSRF token to the request header.
    - Include the token in the header with the key `X-CSRFToken`.
    - Set the `X-CSRFToken` header value to the copied CSRF token.
+
+   ![csrftoken](./image/csrf.png)
 
 ### API Endpoints
 
